@@ -1,5 +1,5 @@
 #' @title Multivariate Modelling with greta
-#' @name gretaMultivariate
+#' @name greta.multivariate
 #'
 #' @description A greta extension providing distributions and functions for
 #' multivariate modelling (modelling multivariate response variables).

@@ -9,6 +9,7 @@
 #' @param C K-dimensional correlation matrix
 #' @param dim a scalar giving the number of rows in the resulting greta array
 #'
+#' @importFrom R6 R6Class
 #' @export
 multivariate_probit <- function (mean, C, dim = 1)
   distrib('multivariate_probit', mean, C, dim)
