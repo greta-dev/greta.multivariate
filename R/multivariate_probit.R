@@ -123,25 +123,64 @@ multivariate_probit_distribution <- R6Class (
         idx_neg
         idx_pos
 
-        u_pos <- u[idx_pos]
-        u_neg <- u[idx_neg]
+        # list of length k, giving the index to positive elements in a vector
+        # representing column k
+        idx_pos_list
+        idx_neg_list
+
+        # u_pos <- u[idx_pos]
+        # u_neg <- u[idx_neg]
 
         bound <- tf$zeros(self$dim)
         lj_pos <- tf$zeros(c(N_pos, K))
         lj_neg <- tf$zeros(c(N_neg, K))
         prev <- tf$zeros(N)
 
+        # replacement indices
+        dummy_idx <- .internals$utils$dummy_arrays$dummy(N, K)
+
         for (k in seq_len(K)) {
 
-          bound[, k] <- tf_iprobit(-(mu[, k] + prev) / L)
-          z_pos <- tf_iprobit(bound + (1 - bound) * u_pos)
-          z_neg <- tf_iprobit(bound * u_neg)
-          z[, k] <- c(z_pos, z_neg)
+          # vector index for this column
+          k_idx <- dummy_idx[, k]
+
+          # pos/neg index relative to this slice
+          idx_pos_slice <- idx_pos_list[[k]]
+          idx_neg_slice <- idx_neg_list[[k]]
+
+          # pos/neg index relative to the whole matrix
+          idx_pos_matrix <- k_idx[idx_pos_slice]
+          idx_neg_matrix <- k_idx[idx_neg_slice]
+
+          # update the bounds for this slice
+          bound_k <- tf_iprobit(-(mu[k_idx] + prev) / L)  # make this a backsolve
+
+          # positive and negative bounds in this slice
+          bound_pos_k <- bound_k[idx_pos_slice]
+          bound_neg_k <- bound_k[idx_neg_slice]
+
+          # positive and negative elements of u in this slice
+          u_pos_k <- u[k_idx[idx_pos_list[[k]]]]
+          u_pos_k <- u[k_idx[idx_neg_list[[k]]]]
+
+          z_pos_k <- tf_iprobit(bound_pos_k + (1 - bound_pos_k) * u_pos_k)
+          z_neg_k <- tf_iprobit(bound_neg_k * u_neg_k)
+
+          # recombine into z
+          z <- tf_replace(z, z_pos_k, k_idx[idx_pos_list[[k]]], self$dim)
+          z <- tf_replace(z, z_neg_k, k_idx[idx_neg_list[[k]]], self$dim)
+
           prev <- L[k, 1:k] %*% z[1:k, ]
+
+          # these can be in lists to combine later
           lj_pos[, k] <- tf$log(1 - bound_pos[, k])
           lj_neg[, k] <- tf$log(bound_neg[, k])
 
         }
+
+        # return the log density (the log jacobian of the transformation)
+        tf$reduce_sum(lj_pos) + tf$reduce_sum(lj_neg)
+
 
       }
 
