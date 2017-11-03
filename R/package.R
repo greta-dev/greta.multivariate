@@ -9,3 +9,10 @@
 #' @importFrom greta .internals
 #'
 NULL
+
+distrib <- greta::.internals$nodes$constructors$distrib
+as.greta_array <- greta::.internals$greta_arrays$as.greta_array
+tf_iprobit <- greta::.internals$tensors$tf_iprobit
+fl <- greta::.internals$utils$misc$fl
+tf_as_float <- greta::.internals$tensors$tf_as_float
+tf_rowsums <- greta:::tf_rowsums

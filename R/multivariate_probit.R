@@ -14,10 +14,6 @@
 multivariate_probit <- function (mean, C, dim = 1)
   distrib('multivariate_probit', mean, C, dim)
 
-distrib <- greta::.internals$nodes$constructors$distrib
-tf_iprobit <- greta::.internals$tensors$tf_iprobit
-as.greta_array <- greta::.internals$greta_arrays$as.greta_array
-
 # multivariate probit distribution
 multivariate_probit_distribution <- R6Class (
   'multivariate_probit_distribution',
@@ -112,7 +108,7 @@ multivariate_probit_distribution <- R6Class (
       # return a tf function, taking the binary vector and returning the density
       # (including the log jacobian transform?)
 
-      log_pdf <- function (x) {
+      log_prob <- function (x) {
 
         # find the elements of x that are 1, and those that are 0, count them
         # and split u too. Do this on the values matrix, rather than the tensor?
@@ -186,7 +182,7 @@ multivariate_probit_distribution <- R6Class (
 
       }
 
-      list(log_pdf = log_pdf,
+      list(log_prob = log_prob,
            cdf = NULL,
            log_cdf = NULL)
 
