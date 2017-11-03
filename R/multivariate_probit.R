@@ -16,6 +16,7 @@ multivariate_probit <- function (mean, C, dim = 1)
 
 distrib <- greta::.internals$nodes$constructors$distrib
 tf_iprobit <- greta::.internals$tensors$tf_iprobit
+as.greta_array <- greta::.internals$greta_arrays$as.greta_array
 
 # multivariate probit distribution
 multivariate_probit_distribution <- R6Class (

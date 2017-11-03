@@ -5,6 +5,7 @@
 #' multivariate modelling (modelling multivariate response variables).
 #'
 #' @docType package
+#' @import tensorflow
 #' @importFrom greta .internals
 #'
 NULL
