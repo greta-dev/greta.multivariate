@@ -110,7 +110,7 @@ conditional_bernoulli_distribution <- R6Class (
 
     },
 
-    tf_distrib = function (parameters) {
+    tf_distrib = function (parameters, dag) {
 
       p <- parameters$p
       psi <- parameters$psi
